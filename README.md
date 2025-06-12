@@ -1,6 +1,6 @@
-# Metanet Mobile
+# Metanet Browser
 
-BRC100 Wallet Mobile Application Example
+Enabling identity, micropayments, and use of Metanet websites on mobile devices.
 
 - Runs ReactNative substrate via WebView
 - Lets web apps talk to a wallet

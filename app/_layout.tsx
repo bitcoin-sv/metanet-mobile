@@ -2,7 +2,6 @@ import React from 'react';
 import { Stack } from 'expo-router';
 import { UserContextProvider, NativeHandlers } from '../context/UserContext';
 import packageJson from '../package.json';
-import { WalletInterface } from '@bsv/sdk';
 import { WalletContextProvider } from '@/context/WalletContext';
 import { ExchangeRateContextProvider } from '@/context/ExchangeRateContext';
 import { ThemeProvider } from '@/context/theme/ThemeContext';
@@ -44,7 +43,7 @@ export default function RootLayout() {
       <UserContextProvider 
         nativeHandlers={nativeHandlers} 
         appVersion={packageJson.version} 
-        appName="Metanet Mobile"
+        appName="Metanet"
       >
         <ExchangeRateContextProvider>
           <WalletContextProvider>
@@ -60,9 +59,12 @@ export default function RootLayout() {
                     animation: 'slide_from_right', // Default animation for most screens
                   headerShown: false
                 }}
-                >
+              >
                   <Stack.Screen 
                     name="index"
+                  />
+                  <Stack.Screen 
+                    name="browser"
                   />
                   <Stack.Screen 
                     name="config" 
@@ -72,10 +74,7 @@ export default function RootLayout() {
                       presentation: 'modal'
                     }}
                   />
-                  <Stack.Screen 
-                    name="(tabs)" 
-                  />
-                </Stack>
+              </Stack>
             </ThemeProvider>
           </WalletContextProvider>
         </ExchangeRateContextProvider>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView , Alert } from 'react-native';
 import ConfigModal from '@/components/ConfigModal';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -7,8 +7,6 @@ import { Ionicons } from '@expo/vector-icons';
 import AppLogo from '@/components/AppLogo';
 import { useTheme } from '@/context/theme/ThemeContext';
 import { useWallet } from '@/context/WalletContext';
-import { DEFAULT_WAB_URL, DEFAULT_CHAIN, DEFAULT_STORAGE_URL } from '@/context/config';
-import { Alert } from 'react-native';
 import { useLocalStorage } from '@/context/LocalStorageProvider';
 import { Utils } from '@bsv/sdk';
 
@@ -16,9 +14,9 @@ export default function LoginScreen() {
   // Get theme colors
   const { colors, isDark } = useTheme();
   const { managers, selectedWabUrl, selectedStorageUrl, selectedMethod, selectedNetwork, finalizeConfig } = useWallet();
-  const { getSnap, auth } = useLocalStorage();
+  const { getSnap, setItem, getItem } = useLocalStorage();
   const [loading, setLoading] = React.useState(false);
-
+  const [initializing, setInitializing] = useState(true)
 
   // Navigate to phone auth screen
   const handleGetStarted = async () => {
@@ -32,20 +30,21 @@ export default function LoginScreen() {
       }
       const wabInfo = await res.json()
       console.log({ wabInfo, selectedWabUrl, selectedMethod, selectedNetwork, selectedStorageUrl })
-      const success = finalizeConfig({
+      const finalConfig = {
         wabUrl: selectedWabUrl,
         wabInfo,
         method: selectedMethod || wabInfo.supportedAuthMethods[0],
         network: selectedNetwork,
         storageUrl: selectedStorageUrl
-      })
+      }
+      const success = finalizeConfig(finalConfig)
       if (!success) {
         Alert.alert('Error', 'Failed to finalize configuration. Please try again.');
         return
       }
+      await setItem('finalConfig', JSON.stringify(finalConfig))
       
       // if there's a wallet snapshot, load that
-      await auth(true)
       const snap = await getSnap()
       if (!snap) {
         router.push('/auth/phone');
@@ -53,7 +52,7 @@ export default function LoginScreen() {
       }
       await managers?.walletManager?.loadSnapshot(snap)
       
-      router.replace('/(tabs)/apps')
+      router.replace('/browser')
       return
     } catch (error) {
       console.error(error)
@@ -78,21 +77,40 @@ export default function LoginScreen() {
   const handleConfigured = async () => {
     // After successful config, proceed with auth
     try {
-      await auth(true);
+      const finalConfig = JSON.parse(await getItem('finalConfig') || '')
+      const success = finalizeConfig(finalConfig)
+      if (!success) {
+        return
+      }
       const snap = await getSnap();
       if (!snap) {
         router.push('/auth/phone');
-        return;
+        return
       }
       const snapArr = Utils.toArray(snap, 'base64');
       await managers?.walletManager?.loadSnapshot(snapArr);
       
-      router.replace('/(tabs)/apps');
+      router.replace('/browser');
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'Failed to authenticate. Please try again.');
     }
   };
+
+  // Initial app load
+  useEffect(() => {
+    (async () => {
+      try {
+        const snap = await getSnap()
+        if (snap) {
+          await managers?.walletManager?.loadSnapshot(snap)
+          router.replace('/browser')
+        }
+      } finally {
+        setInitializing(false)
+      }
+    })()
+  }, [getSnap, managers?.walletManager])
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -101,10 +119,11 @@ export default function LoginScreen() {
         <View style={styles.logoContainer}>
           <AppLogo />
         </View>
-        
-        <Text style={[styles.welcomeTitle, { color: colors.textPrimary }]}>Metanet Mobile</Text>
+        {!initializing && (
+          <>
+        <Text style={[styles.welcomeTitle, { color: colors.textPrimary }]}>Metanet</Text>
         <Text style={[styles.welcomeText, { color: colors.textSecondary }]}>
-          Secure BSV Blockchain Wallet
+          Browser with identity and payments built in
         </Text>
         
         <TouchableOpacity 
@@ -134,6 +153,8 @@ export default function LoginScreen() {
           onDismiss={handleConfigDismiss}
           onConfigured={handleConfigured}
         />
+        </>
+        )}
       </View>
     </SafeAreaView>
   );

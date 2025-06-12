@@ -1,12 +1,12 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import React from 'react';
+import { View, Text, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import { useTheme, ThemeMode } from '@/context/theme/ThemeContext';
 import { useThemeStyles } from '@/context/theme/useThemeStyles';
 import { Ionicons } from '@expo/vector-icons';
 import { useWallet } from '@/context/WalletContext';
 
 export default function SettingsScreen() {
-  const { colors, isDark, mode, setThemeMode } = useTheme();
+  const { colors, mode, setThemeMode } = useTheme();
   const styles = useThemeStyles();
   const { updateSettings, settings, logout } = useWallet();
   

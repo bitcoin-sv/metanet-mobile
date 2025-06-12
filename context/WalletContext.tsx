@@ -20,9 +20,7 @@ import {
   KeyDeriver,
   PrivateKey,
   SHIPBroadcaster,
-  Utils,
-  LookupResolver,
-  WalletInterface
+  LookupResolver
 } from '@bsv/sdk'
 import { DEFAULT_SETTINGS, WalletSettings, WalletSettingsManager } from '@bsv/wallet-toolbox-mobile/out/src/WalletSettingsManager'
 import { toast } from 'react-toastify'
@@ -32,9 +30,9 @@ import { UserContext } from './UserContext'
 import isImageUrl from '../utils/isImageUrl'
 import parseAppManifest from '../utils/parseAppManifest'
 import { useLocalStorage } from "@/context/LocalStorageProvider";
-import getApps from "@/utils/getApps";
+import { getApps } from "@/utils/getApps";
 import { router } from "expo-router";
-
+ 
 // -----
 // Context Types
 // -----
@@ -174,7 +172,7 @@ export const WalletContextProvider: React.FC<WalletContextProps> = ({
   const [recentApps, setRecentApps] = useState<any[]>([])
   const [walletBuilt, setWalletBuilt] = useState<boolean>(false)
 
-  const { getSnap, deleteSnap, getItem, setItem, deleteItem, auth } = useLocalStorage()
+  const { getSnap, deleteSnap, getItem, setItem } = useLocalStorage()
 
   const { isFocused, onFocusRequested, onFocusRelinquished, setBasketAccessModalOpen, setCertificateAccessModalOpen, setProtocolAccessModalOpen, setSpendingAuthorizationModalOpen } = useContext(UserContext);
 
@@ -595,10 +593,6 @@ export const WalletContextProvider: React.FC<WalletContextProps> = ({
 
   // Load snapshot function
   const loadWalletSnapshot = useCallback(async (walletManager: WalletAuthenticationManager) => {
-    const response = await auth(true)
-    if (!response) {
-      return
-    }
     const snap = await getSnap()
     if (snap) {
       try {
@@ -612,7 +606,7 @@ export const WalletContextProvider: React.FC<WalletContextProps> = ({
       }
     }
     return walletManager
-  }, [getItem, deleteItem]);
+  }, [deleteSnap, getSnap]);
 
   // Watch for wallet authentication after snapshot is loaded
   useEffect(() => {
@@ -753,6 +747,7 @@ export const WalletContextProvider: React.FC<WalletContextProps> = ({
     if (typeof managers?.permissionsManager === 'object') {
       (async () => {
         const storedApps = await getItem('recentApps')
+        console.log('Retrieved from storage', storedApps)
         if (storedApps) {
           setRecentApps(JSON.parse(storedApps))
         }
@@ -766,7 +761,7 @@ export const WalletContextProvider: React.FC<WalletContextProps> = ({
         await setItem('recentApps', JSON.stringify(parsedAppData))
       })()
     }
-  }, [adminOriginator, managers?.permissionsManager])
+  }, [adminOriginator, managers?.permissionsManager, getItem, setItem])
 
   const contextValue = useMemo<WalletContextValue>(() => ({
     managers,

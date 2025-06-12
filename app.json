@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Metanet Mobile",
-    "slug": "metanet-mobile",
+    "name": "Metanet",
+    "slug": "metanet",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "metanet-mobile",
+    "scheme": "metanet",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "web": {

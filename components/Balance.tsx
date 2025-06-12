@@ -36,7 +36,7 @@ export default function Balance() {
 
     return (
         <View style={[componentStyles.container, { backgroundColor: colors.paperBackground }]}>
-            <Text style={[componentStyles.sectionTitle, { color: colors.textPrimary }]}>Balance</Text>
+            <Text style={[componentStyles.sectionTitle, { color: colors.textPrimary }]}>you have</Text>
             {balanceLoading ? <View style={componentStyles.loadingContainer}><AppLogo size={50} rotate /></View> : <Text onPress={refreshBalance} style={[componentStyles.balance, { color: colors.textPrimary }]}><AmountDisplay abbreviate>{accountBalance}</AmountDisplay></Text>}
         </View>
     );
@@ -45,8 +45,7 @@ export default function Balance() {
 const componentStyles = StyleSheet.create({
     container: {
         padding: 16,
-        borderRadius: 12,
-        height: 100
+        borderRadius: 12
     },
     loadingContainer: {
         alignItems: 'center',
@@ -56,9 +55,10 @@ const componentStyles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '600',
         marginBottom: 16,
+        textAlign: 'center'
     },
     balance: {
-        fontSize: 36,
+        fontSize: 30,
         fontWeight: 'bold',
         textAlign: 'center'
     }

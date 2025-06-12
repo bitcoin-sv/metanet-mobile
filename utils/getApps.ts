@@ -49,4 +49,3 @@ export const getApps = async ({
   }
 }
 
-export default getApps

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image, TextInput } from 'react-native';
 import Fuse from 'fuse.js';
 import { useTheme } from '@/context/theme/ThemeContext';
@@ -11,7 +11,13 @@ interface App {
 }
 
 const defaultApps: App[] = [
-    { domain: 'https://p2pmnee.atx.systems', appName: 'P2PMNEE', appIconImageUrl: 'https://p2pmnee.atx.systems/p2m.png' }
+    { domain: 'https://p2pmnee.atx.systems', appName: 'P2PMNEE', appIconImageUrl: 'https://p2pmnee.atx.systems/p2m.png' },
+    { domain: 'https://metanetstatus.lovable.app', appName: 'Metanet Status', appIconImageUrl: 'https://metanetstatus.lovable.app/favicon.ico' },
+    { domain: 'https://todo.metanet.app', appName: 'My ToDo List', appIconImageUrl: 'https://todo.metanet.app/favicon.ico' },
+    { domain: 'https://peerpay.babbage.systems', appName: 'PeerPay', appIconImageUrl: 'https://peerpay.babbage.systems/favicon.ico' },
+    { domain: 'https://mountaintops.net', appName: 'Mountaintops', appIconImageUrl: 'https://mountaintops.net/favicon.ico' },
+    { domain: 'https://metanetacademy.com', appName: 'Metanet Academy', appIconImageUrl: 'https://metanetacademy.com/favicon.ico' },
+    { domain: 'https://coinflip.babbage.systems', appName: 'Coinflip Friend', appIconImageUrl: 'https://coinflip.babbage.systems/favicon.ico' }
 ];
 
 export const RecommendedApps = ({ setStartingUrl }: { setStartingUrl: (url: string) => void }) => {
@@ -75,7 +81,7 @@ export const RecommendedApps = ({ setStartingUrl }: { setStartingUrl: (url: stri
 
   return (
     <View style={[componentStyles.container, { backgroundColor: colors.paperBackground }]}>
-      <Text style={[componentStyles.sectionTitle, { color: colors.textPrimary }]}>Applications</Text>
+      <Text style={[componentStyles.sectionTitle, { color: colors.textPrimary }]}>Bookmarks</Text>
       
       <View style={componentStyles.searchContainer}>
         <TextInput
@@ -84,7 +90,7 @@ export const RecommendedApps = ({ setStartingUrl }: { setStartingUrl: (url: stri
             backgroundColor: colors.inputBackground || colors.background,
             borderColor: colors.inputBorder
           }]}
-          placeholder="Search apps..."
+          placeholder="Search bookmarks..."
           placeholderTextColor={colors.textSecondary}
           value={searchQuery}
           onChangeText={setSearchQuery}
